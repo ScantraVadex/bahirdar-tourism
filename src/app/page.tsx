@@ -82,7 +82,7 @@ export default async function HomePage() {
             </div>
 
             {/* Headline */}
-            <h1 className="text-6xl sm:text-8xl lg:text-9xl font-extrabold text-white tracking-tight leading-none mb-6">
+            <h1 className="text-4xl sm:text-7xl lg:text-9xl font-extrabold text-white tracking-tight leading-none mb-6">
               Discover <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-emerald-400">Bahir Dar</span>
             </h1>
 

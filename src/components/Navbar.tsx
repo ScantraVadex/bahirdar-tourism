@@ -1,19 +1,11 @@
 import Link from 'next/link';
 import { getCurrentUser } from '@/lib/auth';
 import { logoutAction } from '@/actions/auth';
+import MobileNav from './MobileNav';
 import { 
-  Compass, 
   MapPin, 
-  Heart, 
-  Calendar, 
-  User as UserIcon, 
   LogOut, 
   ShieldCheck, 
-  Menu,
-  Sparkles,
-  Hotel,
-  Utensils,
-  BookOpen
 } from 'lucide-react';
 
 export default async function Navbar() {
@@ -22,10 +14,10 @@ export default async function Navbar() {
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-md">
       <div className="w-full px-3 sm:px-5 lg:px-6">
-        <div className="flex items-center justify-between h-28">
+        <div className="flex items-center justify-between h-20 sm:h-24 lg:h-28">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3.5 group">
-            <div className="w-14 h-14 rounded-2xl bg-white border-2 border-slate-200 p-1 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform overflow-hidden">
+          <Link href="/" className="flex items-center gap-2.5 sm:gap-3.5 group">
+            <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-2xl bg-white border-2 border-slate-200 p-1 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform overflow-hidden shrink-0">
               <img
                 src="/logo.png"
                 alt="Bahir Dar Logo"
@@ -33,10 +25,10 @@ export default async function Navbar() {
               />
             </div>
             <div className="flex flex-col">
-              <span className="font-black text-2xl text-slate-900 leading-tight tracking-tight group-hover:text-sky-600 transition-colors">
+              <span className="font-black text-xl sm:text-2xl text-slate-900 leading-tight tracking-tight group-hover:text-sky-600 transition-colors">
                 Bahir Dar
               </span>
-              <span className="text-xs sm:text-sm font-extrabold text-emerald-600 uppercase tracking-widest">
+              <span className="text-[10px] sm:text-xs font-extrabold text-emerald-600 uppercase tracking-widest">
                 Tourism Experience
               </span>
             </div>
@@ -83,8 +75,8 @@ export default async function Navbar() {
             </Link>
           </nav>
 
-          {/* User Auth Section */}
-          <div className="flex items-center gap-4">
+          {/* Desktop User Auth Section */}
+          <div className="hidden lg:flex items-center gap-4">
             {user ? (
               <div className="flex items-center gap-3">
                 {user.role === 'ADMIN' && (
@@ -111,7 +103,7 @@ export default async function Navbar() {
                       {user.name ? user.name[0].toUpperCase() : 'U'}
                     </div>
                   )}
-                  <span className="hidden sm:inline">{user.name.split(' ')[0]}</span>
+                  <span>{user.name.split(' ')[0]}</span>
                 </Link>
                 <form action={logoutAction}>
                   <button
@@ -139,6 +131,11 @@ export default async function Navbar() {
                 </Link>
               </div>
             )}
+          </div>
+
+          {/* Mobile Navigation Drawer Trigger */}
+          <div className="flex lg:hidden items-center gap-2">
+            <MobileNav user={user} />
           </div>
         </div>
       </div>
