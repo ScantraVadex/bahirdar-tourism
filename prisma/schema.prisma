@@ -1,0 +1,164 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(cuid())
+  name         String
+  email        String        @unique
+  password     String
+  role         String        @default("TOURIST") // TOURIST, BUSINESS, ADMIN
+  status       String        @default("ACTIVE")  // ACTIVE, INACTIVE
+  avatar       String?
+  bio          String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  reviews      Review[]
+  favorites    Favorite[]
+  itineraries  Itinerary[]
+  businesses   Business[]
+}
+
+model Category {
+  id          String        @id @default(cuid())
+  name        String        @unique
+  slug        String        @unique
+  description String?
+  icon        String?
+  image       String?
+  createdAt   DateTime      @default(now())
+
+  attractions Attraction[]
+}
+
+model Attraction {
+  id            String          @id @default(cuid())
+  title         String
+  slug          String          @unique
+  description   String
+  shortDesc     String
+  categoryId    String
+  category      Category        @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  location      String
+  address       String?
+  latitude      Float
+  longitude     Float
+  entryFee      String?
+  openingHours  String?
+  bestTime      String?
+  activities    String?         // Stored as JSON string or comma-separated
+  highlights    String?         // Stored as JSON string or comma-separated
+  featuredImage String
+  gallery       String?         // Stored as JSON array string
+  rating        Float           @default(5.0)
+  reviewCount   Int             @default(0)
+  isFeatured    Boolean         @default(false)
+  isApproved    Boolean         @default(true)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  reviews       Review[]
+  favorites     Favorite[]
+  itineraryItems ItineraryItem[]
+}
+
+model Review {
+  id           String      @id @default(cuid())
+  rating       Int         // 1 to 5
+  comment      String
+  status       String      @default("APPROVED") // APPROVED, PENDING, REJECTED
+  userId       String
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attractionId String
+  attraction   Attraction  @relation(fields: [attractionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model Favorite {
+  id           String      @id @default(cuid())
+  userId       String
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attractionId String
+  attraction   Attraction  @relation(fields: [attractionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime    @default(now())
+
+  @@unique([userId, attractionId])
+}
+
+model Itinerary {
+  id           String          @id @default(cuid())
+  title        String
+  description  String?
+  durationDays Int             @default(3)
+  startDate    DateTime?
+  userId       String
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  items        ItineraryItem[]
+}
+
+model ItineraryItem {
+  id           String      @id @default(cuid())
+  dayNumber    Int         @default(1)
+  orderIndex   Int         @default(0)
+  notes        String?
+  timeSlot     String?     // Morning, Afternoon, Evening
+  itineraryId  String
+  itinerary    Itinerary   @relation(fields: [itineraryId], references: [id], onDelete: Cascade)
+  attractionId String
+  attraction   Attraction  @relation(fields: [attractionId], references: [id], onDelete: Cascade)
+  createdAt    DateTime    @default(now())
+}
+
+model Business {
+  id            String      @id @default(cuid())
+  name          String
+  type          String      // HOTEL, RESTAURANT, EXPERIENCE, TOUR_OPERATOR
+  description   String
+  address       String
+  location      String
+  latitude      Float
+  longitude     Float
+  priceRange    String?     // $, $$, $$$, $$$$
+  rating        Float       @default(4.8)
+  phone         String?
+  email         String?
+  website       String?
+  facilities    String?     // Stored as JSON string or comma-separated
+  cuisineType   String?
+  openingHours  String?
+  featuredImage String
+  gallery       String?     // Stored as JSON array string
+  status        String      @default("APPROVED") // APPROVED, PENDING, REJECTED
+  userId        String?
+  user          User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Event {
+  id            String      @id @default(cuid())
+  title         String
+  slug          String      @unique
+  description   String
+  category      String      // Cultural, Religious, Music, Festival, Sports
+  location      String
+  venue         String
+  startDate     DateTime
+  endDate       DateTime?
+  price         String?
+  organizer     String
+  featuredImage String
+  status        String      @default("APPROVED") // APPROVED, PENDING
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
